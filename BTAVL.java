@@ -172,30 +172,34 @@ public class BTAVL<T extends Comparable<T>> {
                 }
             }
             
-            if(pap!=null){
-                while(!ban && pap!=null){
-                    if(pap.getElem().compareTo(elem)>0){
-                        pap.setFe(pap.getFe()+1);
+            NodoAVL<T> otro=pap;
+           
+            while (otro != raiz && !ban) {
+                if (otro.getFe() == 0 && otro.getDer() != null && otro.getIzq() != null) {
+                    otro = pap;
+                    pap = pap.getPapa();
+                    if (Math.abs(otro.getFe()) == 2) {
+                        ban = true;
                     }
-                    else{
-                        pap.setFe(pap.getFe()-1);
+                } else {
+                    if (pap.getDer() == otro) {
+                        pap.setFe(pap.getFe() + 1);
+                    } else {
+                        pap.setFe(pap.getFe() - 1);
                     }
-                    if(Math.abs(pap.getFe())>=2){
-                        rotacion(pap.getPapa());
-                        ban=true;
+                    otro = pap;
+                    pap = pap.getPapa();
+                    if (Math.abs(otro.getFe()) == 2) {
+                        ban = true;
                     }
-                    if(Math.abs(pap.getFe())==1){
-                        ban=true;
-                    }
-                    pap=pap.getPapa();
                 }
             }
-            return;
+            if (ban) 
+                rotacion(otro);
+        
         }
         else
             return;
-            
-
     }
     
          
