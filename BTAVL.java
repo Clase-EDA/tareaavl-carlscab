@@ -64,190 +64,141 @@ public class BTAVL<T extends Comparable<T>> {
         }
         
     }
-
-
-    
-    public boolean borra(T dato){
-        NodoAVL<T>  act=new NodoAVL(dato);    //el que queremos borrar
-        NodoAVL<T>  papa=act.getPapa();
-        boolean band = false;
-        
-        while(!band && papa!=null){
-            if(act==act.getPapa().getIzq())
-                act.getPapa().fe+=1;
-            else
-                act.getPapa().fe-=1;
-        }
-        if(abs(act.getPapa().fe)==2){
-            act=rotacion(act.getPapa());
-        }
-        if(abs(act.getPapa().fe)==1)
-            band=true;
-        act=act.getPapa();
-        return band;
-    }
+     
+//    public boolean borra(T dato){
+//        NodoAVL<T>  act=new NodoAVL(dato);    //el que queremos borrar
+//        NodoAVL<T>  papa=act.getPapa();
+//        boolean band = false;
+//        
+//        while(!band && papa!=null){
+//            if(act==act.getPapa().getIzq())
+//                act.getPapa().fe+=1;
+//            else
+//                act.getPapa().fe-=1;
+//        }
+//        if(abs(act.getPapa().fe)==2){
+//            act=rotacion(act.getPapa());
+//        }
+//        if(abs(act.getPapa().fe)==1)
+//            band=true;
+//        act=act.getPapa();
+//        return band;
+//    }
     
     public void remove(T elem){
         NodoAVL<T> temp=busca(elem, raiz);
         NodoAVL<T> pap=null;
+        boolean ban=false;
         
         if(temp!=null){
             cont--;
+            NodoAVL<T> hi=temp.getIzq();
+            NodoAVL<T> hd=temp.getDer();
             
-            if(temp==raiz){
-                int h=raiz.getFe();
-                //hay hd
-                if(temp.getDer()!=null){
-                    NodoAVL<T> ant=temp.getDer();
-                    NodoAVL<T> act=ant.getIzq();
-                    
-                    while(act!=null){
-                        ant=act;
-                        act=ant.getIzq();
-                    }
-                    T dato=ant.getElem();
-                    raiz.setElem(dato);
-                    
-                    //si no tiene hijos
-                    if(ant.getDer()==null && ant.getIzq()==null){
-                        ant.getPapa().setDer(null);//der
-                        ant.getPapa().setFe(h--);
-                        rotacion(ant.getPapa());                     
-                        ant.setPapa(null);
-
-                    }else{
-                        //hijo der, pero no izq
-                        if(ant.getDer()!=null && ant.getIzq()==null){
-                                ant.getPapa().cuelga(ant.getDer(), ant.getPapa());//der
-                                ant.setPapa(null);
-                                ant.setDer(null);//der
-                                ant.getPapa().setFe();
-                                rotacion(ant.getPapa());
-                        }else{
-                            //hijo izq pero no hijo der
-                            if(ant.getDer()==null && ant.getIzq()!=null){
-                                ant.getPapa().cuelga(ant.getIzq(), ant.getPapa());
-                                ant.setPapa(null);
-                                ant.setIzq(null);//izq
-                                ant.getPapa().setFe();
-                                rotacion(ant.getPapa());
-                            }
-                            else{
-                                //tiene los dos hijos
-                                ant.getPapa().cuelga(ant.getDer(), ant.getPapa());
-                                ant.getDer().cuelga(ant.getIzq(), ant.getDer());
-                                ant.getPapa().setFe();
-                                rotacion(ant.getPapa());
-                                ant.getDer().setFe();
-                                rotacion(ant.getDer());
-                            }
-                        }
-                    
-                    }
-                    raiz.setFe();
-                    temp.setIzq(null);
-                    temp.setDer(null);
-                    temp.setPapa(null);
-                    return;
+            
+            //nodo no tiene hijos
+            if(hi==null && hd==null){
+                if(raiz==temp){
+                    raiz=null;
+                    raiz.setFe(0);
+                    raiz.setPapa(null);
                 }
-                //no hay hd
                 else{
-                    //perpo sí hay hi
-                    if(temp.getIzq()!=null){
-                        raiz=temp.getIzq();
-                        raiz.setFe(h++);
-                        rotacion(raiz);
+                    pap=temp.getPapa();
+                       //no es la raiz y no tiene hijos
+                    if(pap.getDer()==temp){
+                        pap.setDer(null);
+                        //pap.setFe(--
                     }
-                    //tampoco hay hi
                     else{
-                        raiz.setFe(0);
-                        raiz=null;
+                        pap.setIzq(null);
+                        //pap.setFe(++
                     }
-                    temp.setIzq(null);
-                    temp.setPapa(null);
-                    //raiz.setFe(0);
-                    return;
                 }
-            }
-            else{
-                //el que buscamos no es la raiz
-                pap=temp.getPapa();
-                int g=pap.getFe();
+            }else{
+                //tiene algún esquincle
                 
-                //si no tiene hijos
-                if(temp.getDer()==null && temp.getIzq()==null){
-                    
-                        if(pap.getIzq()==temp){
-                            pap.setIzq(null);
-                            g++;
+                //tiene izq, pero no der
+                if(hd==null && hi!=null){
+                    if(raiz==temp){
+                        raiz=hi;
+                        raiz.setPapa(null);
+                        //raiz.setFe(0);
+                    }
+                    else{
+                        pap=temp.getPapa();
+                        pap.cuelga(hi, pap);
+                        //pap.setFe++
+                    }
+                }else{
+                    //tiene der, pero no izq
+                    if(hd!=null && hi==null){
+                        if(raiz==temp){
+                            raiz=hd;
+                            raiz.setPapa(null);
+                            //raiz.setFe(0);
                         }
                         else{
-                            pap.setDer(null);
-                            g--;
-                        pap.setFe(g);
-                        rotacion(pap);
-                    }
-                    
-                }
-                //hi sí hd nel
-                if(temp.getIzq()!=null && temp.getDer()==null){
-
-                        pap.cuelga(temp.getIzq(), pap);
-                        temp.getIzq().setFe();
-                        rotacion(temp.getIzq());
-                        temp.setIzq(null);
-                        pap.setFe(g--);
-                        rotacion(pap);
-
-                }
-                //hi no hd sí
-                if(temp.getIzq()==null && temp.getDer()!=null){
-
-                    pap.cuelga(temp.getDer(), pap);
-                    temp.getDer().setFe();
-                    rotacion(temp.getDer());
-                    pap.setFe(g++);
-                    rotacion(pap);
-                    temp.setDer(null);
-                    
-                }
-                
-                temp.setPapa(null);
-                boolean termine;
-                NodoAVL<T> actual = temp;
-                termine = false;
-                while (actual != raiz && !termine) {
-                    if (actual.getFe() == 0 && actual.getDer() != null && actual.getIzq() != null) {
-                        actual = pap;
-                        pap = pap.getPapa();
-                        if (Math.abs(actual.getFe()) == 2) {
-                            termine = true;
-                        }
-                    } else {
-                        if (pap.getDer() == actual) {
-                            pap.setFe(pap.getFe() + 1);
-                        } else {
-                            pap.setFe(pap.getFe() - 1);
-                        }
-                        actual = pap;
-                        pap = pap.getPapa();
-                        if (Math.abs(actual.getFe()) == 2) {
-                            termine = true;
+                            pap=temp.getPapa();
+                            pap.cuelga(hd, pap);
+                            //pap.setFe--
                         }
                     }
+                    else{
+                        //tiene los dos izq/der
+                        pap=temp.getDer();
+                        NodoAVL<T> act=pap.getIzq();
+
+                        while(act!=null){
+                            pap=act;
+                            act=pap.getIzq();
+                        }
+                        T ndato=pap.getElem();
+                        
+                        if(pap.getDer()==null){
+                            if(ndato.compareTo(pap.getPapa().getElem())>0)
+                                pap.getPapa().setDer(null);
+                            else
+                                pap.getPapa().setIzq(null);
+                        }
+                        else{
+                            if(ndato.compareTo(pap.getPapa().getElem())>0)
+                                pap.getPapa().setDer(pap.getDer());
+                            else
+                                pap.getPapa().setIzq(pap.getDer());
+                        }
+                        pap.getPapa().setElem(ndato);
+                    }
                 }
-                if (termine) 
-                    rotacion(actual);                
             }
+            
+            if(pap!=null){
+                while(!ban && pap!=null){
+                    if(pap.getElem().compareTo(elem)>0){
+                        pap.setFe(pap.getFe()+1);
+                    }
+                    else{
+                        pap.setFe(pap.getFe()-1);
+                    }
+                    if(Math.abs(pap.getFe())>=2){
+                        rotacion(pap.getPapa());
+                        ban=true;
+                    }
+                    if(Math.abs(pap.getFe())==1){
+                        ban=true;
+                    }
+                    pap=pap.getPapa();
+                }
+            }
+            return;
         }
         else
             return;
-        
+            
+
     }
     
-    
-
-   
+         
     private NodoAVL<T> rotacion(NodoAVL<T> n){
         //izq-izq
         if(n.getFe()==-2 && n.getIzq().getFe()<=0){
