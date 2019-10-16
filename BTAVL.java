@@ -88,13 +88,14 @@ public class BTAVL<T extends Comparable<T>> {
     public void remove(T elem){
         NodoAVL<T> temp=busca(elem, raiz);
         NodoAVL<T> pap=null;
-        boolean ban=false;
+        
         
         if(temp!=null){
             cont--;
+            boolean ban=false;
             NodoAVL<T> hi=temp.getIzq();
             NodoAVL<T> hd=temp.getDer();
-            
+            int h;
             
             //nodo no tiene hijos
             if(hi==null && hd==null){
@@ -162,40 +163,61 @@ public class BTAVL<T extends Comparable<T>> {
                                 pap.getPapa().setIzq(null);
                         }
                         else{
-                            if(ndato.compareTo(pap.getPapa().getElem())>0)
+                            h=pap.getFe();
+                            if(ndato.compareTo(pap.getPapa().getElem())>0){
                                 pap.getPapa().setDer(pap.getDer());
-                            else
+                                //pap.setFe(h++);
+                            }else{
                                 pap.getPapa().setIzq(pap.getDer());
+                               // pap.setFe(h--);
+                                //pap.fe-=1;
+                            }
+                            pap.setDer(null);
                         }
-                        pap.getPapa().setElem(ndato);
+                        if(pap.getPapa().getPapa()==raiz)
+                            raiz.setElem(ndato);
+                        else
+                            pap.getPapa().getPapa().setElem(ndato);//añadí un get papa
+                        
                     }
                 }
             }
             
-            NodoAVL<T> otro=pap;
+           // NodoAVL<T> otro=pap.getPapa();
+           // temp.setPapa(null);
            
-            while (otro != raiz && !ban) {
-                if (otro.getFe() == 0 && otro.getDer() != null && otro.getIzq() != null) {
-                    otro = pap;
+            System.out.println(temp.getElem()+"     "+raiz.getElem() );
+            pap.getPapa().setFe();
+            temp=pap;
+            
+            
+            if(temp.getElem().equals(raiz.getElem())){
+                raiz.setFe(raiz.numDescendientesDer()-raiz.numDescendientesIzq());
+                rotacion(raiz);
+            }
+            while (temp != raiz && !ban) {
+                if (temp.getFe() == 0 && temp.getDer() != null && temp.getIzq() != null) {
+                    temp = pap;
                     pap = pap.getPapa();
-                    if (Math.abs(otro.getFe()) == 2) {
+                    if (Math.abs(temp.getFe()) == 2) {
                         ban = true;
                     }
                 } else {
-                    if (pap.getDer() == otro) {
-                        pap.setFe(pap.getFe() + 1);
-                    } else {
+                    if (pap.getDer() == temp) {
                         pap.setFe(pap.getFe() - 1);
+                    } else {    //intercambie signos
+                        pap.setFe(pap.getFe() + 1);
                     }
-                    otro = pap;
+                    temp = pap;
                     pap = pap.getPapa();
-                    if (Math.abs(otro.getFe()) == 2) {
+                    if (Math.abs(temp.getFe()) == 2) {
                         ban = true;
                     }
                 }
             }
+            
             if (ban) 
-                rotacion(otro);
+                rotacion(raiz);
         
         }
         else
