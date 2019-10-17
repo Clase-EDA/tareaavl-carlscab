@@ -198,7 +198,7 @@ public class BTAVL<T extends Comparable<T>> {
             while (temp != raiz && !ban) {
                 if (temp.getFe() == 0 && temp.getDer() != null && temp.getIzq() != null) {
                     temp = pap;
-                    pap = pap.getPapa();
+                    pap = temp.getPapa();
                     if (Math.abs(temp.getFe()) == 2) {
                         ban = true;
                     }
@@ -209,7 +209,7 @@ public class BTAVL<T extends Comparable<T>> {
                         pap.setFe(pap.getFe() + 1);
                     }
                     temp = pap;
-                    pap = pap.getPapa();
+                    pap = temp.getPapa();
                     if (Math.abs(temp.getFe()) == 2) {
                         ban = true;
                     }
@@ -273,7 +273,8 @@ public class BTAVL<T extends Comparable<T>> {
             NodoAVL<T> A=beta.getIzq();
             NodoAVL<T> B=gamma.getIzq();
             NodoAVL<T> C=gamma.getDer();
-            
+            System.out.println(alfa.getElem()+" "+beta.getElem()+"  "+gamma.getElem());
+            System.out.println(alfa.getFe()+" "+beta.getFe()+"  "+gamma.getFe()+" "+papa.getFe());
             if(A!=null)
                 beta.cuelga(A, beta);
             if(B!=null)
@@ -298,6 +299,7 @@ public class BTAVL<T extends Comparable<T>> {
             alfa.setFe();
             gamma.setFe();
             beta.setFe();
+            System.out.println(alfa.getFe()+" "+beta.getFe()+"  "+gamma.getFe()+"  "+papa.getFe());
             return gamma;   
         }
         
@@ -312,7 +314,8 @@ public class BTAVL<T extends Comparable<T>> {
             NodoAVL<T> B=beta.getIzq();
             NodoAVL<T> C=gamma.getIzq();
             NodoAVL<T> D=gamma.getDer();
-            
+            System.out.println(alfa.getElem()+" "+beta.getElem()+"  "+gamma.getElem());
+            System.out.println(alfa.getFe()+" "+beta.getFe()+"  "+gamma.getFe());
             if(A!=null){
                 alfa.cuelga(A, alfa);
             }
@@ -340,9 +343,11 @@ public class BTAVL<T extends Comparable<T>> {
                 raiz.setFe();
             }
             alfa.setFe();
-            gamma.setFe();
             beta.setFe();
+            int g=gamma.numDescendientesDer()-gamma.numDescendientesIzq();
+            gamma.setFe(g);
             
+            System.out.println(gamma.getElem()+"  "+gamma.numDescendientesDer()+"  "+gamma.numDescendientesIzq()+" "+g);
             return beta;   
         }
          //der-izq
